@@ -24,69 +24,80 @@ openapi = TuyaOpenAPI(ENDPOINT, ACCESS_ID, ACCESS_KEY)
 connection = openapi.connect(USERNAME, PASSWORD, "60", "smartlife")
 print(connection)
 
-loopCont = True
-lightStat = 1
+lightStat = None
 work_mode_value = None  # to consider what status to print
 
 
-while loopCont:
-    print("What would you like to do:\n1. Status\n2. Light\n3. Color")
+while True:
+    print(
+        "What would you like to do:\n1. Status\n2. Light\n3. Color\n4. Brightness\n5. Temperature"
+    )
 
-    selection = int(input("Enter your choice: "))
+    # try except block
+    try:
+        selection = int(input("Enter your choice: "))
 
-    if selection == 1:
-        result = openapi.get(f"/v1.0/iot-03/devices/{LIGHT_DEVICE_ID}/status")
+        if selection == 1:
+            commands = None  # get status not a command
+            result = openapi.get(f"/v1.0/iot-03/devices/{LIGHT_DEVICE_ID}/status")
+            if result["success"]:
+                devCommands.commandStatus(result)
 
-        if result["success"]:
-            for item in result["result"]:
-                if item["code"] == "switch_led":
-                    switch_led_value = item["value"]
-                    print("Switch LED:", switch_led_value)
-                    continue
-                if item["code"] == "work_mode":
-                    work_mode_value = item["value"]
-                    print("Work Mode:", work_mode_value)
-                    continue
-                # if colour mode
-                if work_mode_value == "colour":
-                    if item["code"] == "colour_data_v2":
-                        colour_led_value = item["value"]
-                        colour = colourHelper.get_matching_colour(colour_led_value)
-                        if colour is not None:
-                            colour_led_value = colour
-                        print("LED Colour:", colour_led_value)
+        elif selection == 2:
+            print("Would you like to turn the light on (1) or off (2)")
+            lightStat = int(input("Enter your choice: "))
+            # check choice
+            commands = devCommands.commandChoice(lightStat)
+            print(commands)
 
-    elif selection == 2:
-        print("Would you like to turn the light on (1) or off (2)")
-        lightStat = int(input("Enter your choice: "))
-        # print({type(lightStat)})
+        elif selection == 3:
+            # check choice
+            commands = devCommands.colorChoice()
+            print(commands)
 
-        # check choice
-        commands = devCommands.commandChoice(lightStat)
-        print(commands)
+        elif selection == 4:
+            # get current brightness
+            result = openapi.get(f"/v1.0/iot-03/devices/{LIGHT_DEVICE_ID}/status")
 
+            if result["success"]:
+                for item in result["result"]:
+                    if item["code"] == "bright_value_v2":
+                        bright_value = item["value"]
+                        break
+            # get brightness command
+            commands = devCommands.commandBrightness(bright_value)
+            print(commands)
+
+        elif selection == 5:
+            # get current temperature
+            result = openapi.get(f"/v1.0/iot-03/devices/{LIGHT_DEVICE_ID}/status")
+
+            if result["success"]:
+                for item in result["result"]:
+                    if item["code"] == "temp_value_v2":
+                        temp_value = item["value"]
+                        break
+            # get temp command
+            commands = devCommands.commandTemp(temp_value)
+            print(commands)
+
+        else:
+            print("Invalid command. Try again.\n")
+
+        # post if there is a command
         if commands is not None:
             result = openapi.post(
                 f"/v1.0/iot-03/devices/{LIGHT_DEVICE_ID}/commands", commands
             )
             print(result)
 
-    elif selection == 3:
-        # check choice
-        commands = devCommands.colorChoice()
-        print(commands)
-
-        if commands is not None:
-            result = openapi.post(
-                f"/v1.0/iot-03/devices/{LIGHT_DEVICE_ID}/commands", commands
-            )
-            print(result)
+    except Exception:
+        print("An error occurred. Please try again.\n")
 
     loopContinue = input("Would you like to continue (y to continue): ")
-    if loopContinue == "y":
-        print("Continuing...\n")
-    else:
+    if loopContinue != "y":
         break
+    print("Continuing...\n")
 
 
 """ commands = {"commands": [{"code": "switch_led", "value": True}]}
