@@ -24,6 +24,10 @@ def commandChoice(lightStat):
         return None
 
 
+def commandLightSwitch(switchMode):
+    return {"commands": [{"code": "switch_led", "value": switchMode}]}
+
+
 # plug on/off
 def commandPlugSwitch(switchMode):
     return {"commands": [{"code": "switch_1", "value": switchMode}]}
@@ -34,10 +38,11 @@ def commandStatus(result):
     work_mode_value = None
     bright_value = None
     temp_value = None
+    colour_led_value = None
     for item in result["result"]:
         if item["code"] == "switch_led":
             switch_led_value = item["value"]
-            print("Switch LED:", switch_led_value)
+            # print("Switch LED:", switch_led_value)
             continue
         if item["code"] == "bright_value_v2":
             bright_value = item["value"]
@@ -47,20 +52,21 @@ def commandStatus(result):
             continue
         if item["code"] == "work_mode":
             work_mode_value = item["value"]
-            print("Work Mode:", work_mode_value)
-            # if colour mode
+            # print("Work Mode:", work_mode_value)
+        # if colour mode
         if work_mode_value == "colour":
             if item["code"] == "colour_data_v2":
                 colour_led_value = item["value"]
                 colour = colourHelper.get_matching_colour(colour_led_value)
                 if colour is not None:
                     colour_led_value = colour
-                print("LED Colour:", colour_led_value)
+                # print("LED Colour:", colour_led_value)
                 break
-        # if white mode
+    return switch_led_value, work_mode_value, bright_value, temp_value, colour_led_value
+    """ # if white mode
     if work_mode_value == "white":
         print("Bright Value:", bright_value)
-        print("Temp Value:", temp_value)
+        print("Temp Value:", temp_value) """
 
 
 def commandStatusPlug(result):
@@ -71,19 +77,23 @@ def commandStatusPlug(result):
     for item in result["result"]:
         if item["code"] == "switch_1":
             switch_plug_value = item["value"]
-            print("Switch Plug:", switch_plug_value)
+            # print("Switch Plug:", switch_plug_value)
             continue
         if item["code"] == "cur_power":
             power_value = item["value"]
-            print("Current power (W):", float(power_value / 10))
+            power_value = float(power_value / 10)
+            # print("Current power (W):", power_value)
             continue
         if item["code"] == "cur_current":
             current_value = item["value"]
-            print("Current current (mA):", current_value)
+            # print("Current current (mA):", current_value)
             continue
         if item["code"] == "cur_voltage":
             voltage_value = item["value"]
-            print("Current voltage (V):", float(voltage_value / 10))
+            voltage_value = float(voltage_value / 10)
+            # print("Current voltage (V):", voltage_value)
+            continue
+    return switch_plug_value, power_value, current_value, voltage_value
 
 
 def commandStatusPlugPower(result):
@@ -169,6 +179,32 @@ def commandBrightness(bright_value):
     else:
         return None
 
+    return {"commands": [{"code": "bright_value_v2", "value": brightness}]}
+
+
+def commandBrightnessIncrease(bright_value):
+    brightness = bright_value + 100
+    # max brightness at 1000
+    if brightness > 1000:
+        brightness = 1000
+        print("Brightness already at maximum.")
+    return {"commands": [{"code": "bright_value_v2", "value": brightness}]}
+
+
+def commandBrightnessDecrease(bright_value):
+    brightness = bright_value - 100
+    # min brightness at 10
+    if brightness < 10:
+        brightness = 10
+        print("Brightness already at minimum.")
+    return {"commands": [{"code": "bright_value_v2", "value": brightness}]}
+
+
+def commandBrightnessSet(bright_value):
+    brightness = int(input("Enter the brightness value (10-1000): "))
+    if brightness > 1000 or brightness < 10:
+        print("Invalid value. Please enter a valid brightness value.\n")
+        return None
     return {"commands": [{"code": "bright_value_v2", "value": brightness}]}
 
 

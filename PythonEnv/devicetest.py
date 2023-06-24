@@ -27,11 +27,14 @@ print(connection)
 
 lightStat = None
 work_mode_value = None  # to consider what status to print
+# to identify device
+light = "light"
+plug = "plug"
 
 
 while True:
     print(
-        "What would you like to do:\n1. Status\n2. Light\n3. Color\n4. Brightness\n5. Temperature\n6. Plug Status\n7. Power Consumption\n8. Plug On\n9. Plug Off"
+        "What would you like to do:\n1. Status\n2. Light\n3. Color\n4. Brightness\n5. Temperature\n6. Plug Status\n7. Power Consumption\n8. Plug On\n9. Plug Off\n10. Light On\n11. Light Off"
     )
 
     # try except block
@@ -39,12 +42,29 @@ while True:
         selection = int(input("Enter your choice: "))
 
         if selection == 1:
+            device = light
             commands = None  # get status not a command
             result = openapi.get(f"/v1.0/iot-03/devices/{LIGHT_DEVICE_ID}/status")
             if result["success"]:
-                devCommands.commandStatus(result)
+                # get all the status values
+                (
+                    switch_led_value,
+                    work_mode_value,
+                    bright_value,
+                    temp_value,
+                    colour_led_value,
+                ) = devCommands.commandStatus(result)
+                print("Switch LED:", switch_led_value)
+                print("Work Mode:", work_mode_value)
+                # print value depending on work mode
+                if work_mode_value == "colour":
+                    print("LED Colour:", colour_led_value)
+                elif work_mode_value == "white":
+                    print("Bright Value:", bright_value)
+                    print("Temp Value:", temp_value)
 
         elif selection == 2:
+            device = light
             print("Would you like to turn the light on (1) or off (2)")
             lightStat = int(input("Enter your choice: "))
             # check choice
@@ -52,12 +72,12 @@ while True:
             print(commands)
 
         elif selection == 3:
-            # check choice
+            device = light
             commands = devCommands.colorChoice()
             print(commands)
 
         elif selection == 4:
-            # get current brightness
+            device = light
             result = openapi.get(f"/v1.0/iot-03/devices/{LIGHT_DEVICE_ID}/status")
 
             if result["success"]:
@@ -66,11 +86,20 @@ while True:
                         bright_value = item["value"]
                         break
             # get brightness command
-            commands = devCommands.commandBrightness(bright_value)
+            print("1. Increase\n2. Decrease\n3. Set")
+            selection = int(input("Enter your choice: "))
+            if selection == 1:
+                commands = devCommands.commandBrightnessIncrease(bright_value)
+            elif selection == 2:
+                commands = devCommands.commandBrightnessDecrease(bright_value)
+            elif selection == 3:
+                commands = devCommands.commandBrightnessSet(bright_value)
+            # commands = devCommands.commandBrightness(bright_value)
             print(commands)
 
         elif selection == 5:
             # get current temperature
+            device = light
             result = openapi.get(f"/v1.0/iot-03/devices/{LIGHT_DEVICE_ID}/status")
 
             if result["success"]:
@@ -83,12 +112,23 @@ while True:
             print(commands)
 
         elif selection == 6:
+            device = plug
             commands = None  # get status not a command
             result = openapi.get(f"/v1.0/iot-03/devices/{PLUG_DEVICE_ID}/status")
             if result["success"]:
-                devCommands.commandStatusPlug(result)
+                (
+                    switch_plug_value,
+                    power_value,
+                    current_value,
+                    voltage_value,
+                ) = devCommands.commandStatusPlug(result)
+                print("Switch Plug:", switch_plug_value)
+                print("Current power (W):", power_value)
+                print("Current current (mA):", current_value)
+                print("Current voltage (V):", voltage_value)
 
         elif selection == 7:
+            device = plug
             commands = None  # get status not a command
             result = openapi.get(f"/v1.0/iot-03/devices/{PLUG_DEVICE_ID}/status")
             if result["success"]:
@@ -96,30 +136,41 @@ while True:
                 print("Current power (W):", float(power_value / 10))
 
         elif selection == 8:
+            device = plug
             switchMode = True
             commands = devCommands.commandPlugSwitch(switchMode)
-            result = openapi.post(
-                f"/v1.0/iot-03/devices/{PLUG_DEVICE_ID}/commands", commands
-            )
             print(commands)
-            commands = None  # Dont continue executing
 
         elif selection == 9:
+            device = plug
             switchMode = False
             commands = devCommands.commandPlugSwitch(switchMode)
-            result = openapi.post(
-                f"/v1.0/iot-03/devices/{PLUG_DEVICE_ID}/commands", commands
-            )
             print(commands)
-            commands = None  # Dont continue executing
+
+        elif selection == 10:
+            device = light
+            switchMode = True
+            commands = devCommands.commandLightSwitch(switchMode)
+            print(commands)
+
+        elif selection == 11:
+            device = light
+            switchMode = False
+            commands = devCommands.commandLightSwitch(switchMode)
+            print(commands)
 
         else:
             print("Invalid command. Try again.\n")
 
         # post if there is a command
-        if commands is not None:
+        if commands is not None and device is light:
             result = openapi.post(
                 f"/v1.0/iot-03/devices/{LIGHT_DEVICE_ID}/commands", commands
+            )
+            print(result)
+        elif commands is not None and device is plug:
+            result = openapi.post(
+                f"/v1.0/iot-03/devices/{PLUG_DEVICE_ID}/commands", commands
             )
             print(result)
 
