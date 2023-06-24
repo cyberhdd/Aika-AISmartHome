@@ -34,7 +34,7 @@ plug = "plug"
 
 while True:
     print(
-        "What would you like to do:\n1. Status\n2. Light\n3. Color\n4. Brightness\n5. Temperature\n6. Plug Status\n7. Power Consumption\n8. Plug On\n9. Plug Off\n10. Light On\n11. Light Off"
+        "What would you like to do:\n1. Status\n2. Light Switch\n3. Color\n4. Brightness\n5. Temperature\n6. Plug Status\n7. Power Consumption\n8. Plug On\n9. Plug Off\n10. Light On\n11. Light Off"
     )
 
     # try except block
@@ -68,12 +68,26 @@ while True:
             print("Would you like to turn the light on (1) or off (2)")
             lightStat = int(input("Enter your choice: "))
             # check choice
-            commands = devCommands.commandChoice(lightStat)
+            if lightStat == 1:
+                switchMode = True
+            elif lightStat == 2:
+                switchMode = False
+            else:
+                switchMode = None
+            # commands = devCommands.commandChoice(lightStat)
+            commands = devCommands.commandLightSwitch(switchMode)
             print(commands)
 
         elif selection == 3:
             device = light
-            commands = devCommands.colorChoice()
+            print(
+                "Choose your color:\n1. White\n2. Yellow\n3. Red\n4. Green\n5. Blue\n6. Orange\n7. Purple\n"
+            )
+            # type out the color name
+            selection = input("Color choice: ").lower()
+            print(selection)
+            # input the color name
+            commands = devCommands.commandColorChoice(selection)
             print(commands)
 
         elif selection == 4:
@@ -133,7 +147,7 @@ while True:
             result = openapi.get(f"/v1.0/iot-03/devices/{PLUG_DEVICE_ID}/status")
             if result["success"]:
                 power_value = devCommands.commandStatusPlugPower(result)
-                print("Current power (W):", float(power_value / 10))
+                print("Current power (W):", power_value)
 
         elif selection == 8:
             device = plug

@@ -101,7 +101,7 @@ def commandStatusPlugPower(result):
     for item in result["result"]:
         if item["code"] == "cur_power":
             power_value = item["value"]
-            return power_value
+            return float(power_value / 10)
 
 
 def checkStatus():
@@ -144,6 +144,15 @@ def colorChoice():
             ]
         }
 
+    return command
+
+
+def commandColorChoice(selection):
+    if selection in colourHelper.colours:
+        print(colourHelper.colours)
+        command = colourHelper.get_colour_command(selection)
+    else:
+        command = colourHelper.get_colour_command("white")
     return command
 
 
