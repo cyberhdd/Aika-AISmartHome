@@ -209,8 +209,7 @@ def commandBrightnessDecrease(bright_value):
     return {"commands": [{"code": "bright_value_v2", "value": brightness}]}
 
 
-def commandBrightnessSet(bright_value):
-    brightness = int(input("Enter the brightness value (10-1000): "))
+def commandBrightnessSet(brightness):
     if brightness > 1000 or brightness < 10:
         print("Invalid value. Please enter a valid brightness value.\n")
         return None
@@ -241,6 +240,32 @@ def commandTemp(temp_value):
     else:
         return None
 
+    return {"commands": [{"code": "temp_value_v2", "value": temperature}]}
+
+
+def commandTempIncrease(temp_value):
+    temperature = temp_value + 100
+    print(temp_value, temperature)
+    # max brightness at 1000
+    if temperature > 1000:
+        temperature = 1000
+        print("Brightness already at maximum.")
+    return {"commands": [{"code": "temp_value_v2", "value": temperature}]}
+
+
+def commandTempDecrease(temp_value):
+    temperature = temp_value - 100
+    # min brightness at 10
+    if temperature < 10:
+        temperature = 10
+        print("Brightness already at minimum.")
+    return {"commands": [{"code": "temp_value_v2", "value": temperature}]}
+
+
+def commandTempSet(temperature):
+    if temperature > 1000 or temperature < 10:
+        print("Invalid value. Please enter a valid brightness value.\n")
+        return None
     return {"commands": [{"code": "temp_value_v2", "value": temperature}]}
 
 

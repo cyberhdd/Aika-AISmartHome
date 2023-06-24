@@ -107,7 +107,8 @@ while True:
             elif selection == 2:
                 commands = devCommands.commandBrightnessDecrease(bright_value)
             elif selection == 3:
-                commands = devCommands.commandBrightnessSet(bright_value)
+                brightness = int(input("Enter the brightness value (10-1000): "))
+                commands = devCommands.commandBrightnessSet(brightness)
             # commands = devCommands.commandBrightness(bright_value)
             print(commands)
 
@@ -122,7 +123,15 @@ while True:
                         temp_value = item["value"]
                         break
             # get temp command
-            commands = devCommands.commandTemp(temp_value)
+            print("1. Increase\n2. Decrease\n3. Set")
+            selection = int(input("Enter your choice: "))
+            if selection == 1:
+                commands = devCommands.commandTempIncrease(temp_value)
+            elif selection == 2:
+                commands = devCommands.commandTempDecrease(temp_value)
+            elif selection == 3:
+                temperature = int(input("Enter the temperature value (10-1000): "))
+                commands = devCommands.commandTempSet(temperature)
             print(commands)
 
         elif selection == 6:
