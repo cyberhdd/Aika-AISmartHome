@@ -36,7 +36,21 @@ while True:
             payload, commandMode = devCommands.commandSOFStatus()
             response = postRequest(payload, commandMode)
             if response.status_code == 200:
-                devCommands.commandSOFStatusDetails(response)
+                (
+                    switch,
+                    ltype,
+                    color,
+                    brightness,
+                    temperature,
+                ) = devCommands.commandSOFStatusDetails(response)
+                print("Switch LED:", switch)
+                print("Work Mode:", ltype)
+                # print value depending on work mode
+                if ltype == "color":
+                    print("LED Color:", color)
+                elif ltype == "white":
+                    print("Bright Value:", brightness)
+                    print("Temp Value:", temperature)
             else:
                 print("Request failed with status code: ", response.status_code)
             payload = None  # not sending commands afterwards
@@ -54,13 +68,27 @@ while True:
                 print("Invalid option. Please try again.\n")
 
         elif selection == 3:
-            payload, commandMode = devCommands.commandSOFColor()
+            print(
+                "Choose your color:\n1. White\n2. Yellow\n3. Red\n4. Green\n5. Blue\n6. Orange\n7. Purple\n"
+            )
+            # type out the color name
+            selection = input("Color choice: ").lower()
+
+            payload, commandMode = devCommands.commandSOFColor(selection)
 
         elif selection == 4:
             payload, commandMode = devCommands.commandSOFStatus()
             response = postRequest(payload, commandMode)
             if response.status_code == 200:
-                payload, commandMode = devCommands.commandSOFBrightness(response)
+                print("1. Increase\n2. Decrease\n3. Set")
+                selection = int(input("Enter your choice: "))
+                # pass selection to method
+                if selection == 1 or selection == 2 or selection == 3:
+                    payload, commandMode = devCommands.commandSOFBrightness(
+                        response, selection
+                    )
+                else:
+                    payload = None
             else:
                 print("Request failed with status code: ", response.status_code)
 
@@ -68,7 +96,14 @@ while True:
             payload, commandMode = devCommands.commandSOFStatus()
             response = postRequest(payload, commandMode)
             if response.status_code == 200:
-                payload, commandMode = devCommands.commandSOFTemp(response)
+                print("1. Increase\n2. Decrease\n3. Set")
+                selection = int(input("Enter your choice: "))
+                if selection == 1 or selection == 2 or selection == 3:
+                    payload, commandMode = devCommands.commandSOFTemp(
+                        response, selection
+                    )
+                else:
+                    payload = None
             else:
                 print("Request failed with status code: ", response.status_code)
 

@@ -58,7 +58,7 @@ while True:
                 print("Work Mode:", work_mode_value)
                 # print value depending on work mode
                 if work_mode_value == "colour":
-                    print("LED Colour:", colour_led_value)
+                    print("LED Color:", colour_led_value)
                 elif work_mode_value == "white":
                     print("Bright Value:", bright_value)
                     print("Temp Value:", temp_value)

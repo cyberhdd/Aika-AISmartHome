@@ -274,45 +274,18 @@ def commandTempSet(temperature):
 ##################################################
 
 
-def commandSOFColorPayload():
-    print(
-        "Choose your color:\n1. White\n2. Yellow\n3. Red\n4. Green\n5. Blue\n6. Orange\n7. Purple\n"
-    )
-    selection = int(input("Color choice: "))
-    if selection == 1:
-        color = colourHelper.get_colour_rgb("white")
-
-    elif selection == 2:
-        color = colourHelper.get_colour_rgb("yellow")
-
-    elif selection == 3:
-        color = colourHelper.get_colour_rgb("red")
-
-    elif selection == 4:
-        color = colourHelper.get_colour_rgb("green")
-
-    elif selection == 5:
-        color = colourHelper.get_colour_rgb("blue")
-
-    elif selection == 6:
-        color = colourHelper.get_colour_rgb("orange")
-
-    elif selection == 7:
-        color = colourHelper.get_colour_rgb("purple")
-
+def commandSOFColor(selection):
+    commandMode = "dimmable"
+    if selection in colourHelper.colours:
+        print(colourHelper.colours)
+        color = colourHelper.get_colour_rgb(selection)
     else:
         color = colourHelper.get_colour_rgb("purple")
 
-    command = {
+    payload = {
         "deviceid": LIGHT_SONOFF_DEVICE_ID,
         "data": {"ltype": "color", "color": color},
     }
-    return command
-
-
-def commandSOFColor():
-    commandMode = "dimmable"
-    payload = commandSOFColorPayload()
     return payload, commandMode
 
 
@@ -352,30 +325,28 @@ def commandSOFStatusDetails(result):
     ltype = response_data["data"]["ltype"]
     white = response_data["data"]["white"]
     color = response_data["data"]["color"]
-    print("Switch LED:", switch)
+    brightness = white["br"]
+    temperature = white["ct"]
+    """ print("Switch LED:", switch)
     print("Work Mode:", ltype)
-    """ print("White:", white)
+    print("White:", white)
     print("Color:", color) """
 
     # if colour mode
     if ltype == "color":
-        colour = colourHelper.get_matching_rgb(color)
-        if colour is not None:
-            colour_led_value = colour
-        print("LED Colour:", colour_led_value)
-    # if white mode
-    elif ltype == "white":
-        print("Bright Value:", white["br"])
-        print("Temp Value:", white["ct"])
+        colour_led_value = colourHelper.get_matching_rgb(color)
+        if colour_led_value is not None:
+            color = colour_led_value
+        # print("LED Colour:", color)
+
+    return (switch, ltype, color, brightness, temperature)
 
 
-def commandSOFBrightness(result):
+def commandSOFBrightness(result, selection):
     commandMode = "dimmable"
     response_data = result.json()
     white = response_data["data"]["white"]
     bright_value = white["br"]
-    print("1. Increase\n2. Decrease\n3. Set")
-    selection = int(input("Enter your choice: "))
 
     if selection == 1:
         brightness = bright_value + 10
@@ -404,13 +375,11 @@ def commandSOFBrightness(result):
     return payload, commandMode
 
 
-def commandSOFTemp(result):
+def commandSOFTemp(result, selection):
     commandMode = "dimmable"
     response_data = result.json()
     white = response_data["data"]["white"]
     temp_value = white["ct"]
-    print("1. Increase\n2. Decrease\n3. Set")
-    selection = int(input("Enter your choice: "))
 
     if selection == 1:
         temperature = temp_value + 10
