@@ -19,6 +19,7 @@ USERNAME = credentials["tuya_username"]
 PASSWORD = credentials["tuya_password"]
 
 LIGHT_DEVICE_ID = devices["light_bedroom_id"]
+PLUG_DEVICE_ID = devices["plug_power"]
 
 openapi = TuyaOpenAPI(ENDPOINT, ACCESS_ID, ACCESS_KEY)
 connection = openapi.connect(USERNAME, PASSWORD, "60", "smartlife")
@@ -30,7 +31,7 @@ work_mode_value = None  # to consider what status to print
 
 while True:
     print(
-        "What would you like to do:\n1. Status\n2. Light\n3. Color\n4. Brightness\n5. Temperature"
+        "What would you like to do:\n1. Status\n2. Light\n3. Color\n4. Brightness\n5. Temperature\n6. Plug Status\n7. Power Consumption\n8. Plug On\n9. Plug Off"
     )
 
     # try except block
@@ -80,6 +81,37 @@ while True:
             # get temp command
             commands = devCommands.commandTemp(temp_value)
             print(commands)
+
+        elif selection == 6:
+            commands = None  # get status not a command
+            result = openapi.get(f"/v1.0/iot-03/devices/{PLUG_DEVICE_ID}/status")
+            if result["success"]:
+                devCommands.commandStatusPlug(result)
+
+        elif selection == 7:
+            commands = None  # get status not a command
+            result = openapi.get(f"/v1.0/iot-03/devices/{PLUG_DEVICE_ID}/status")
+            if result["success"]:
+                power_value = devCommands.commandStatusPlugPower(result)
+                print("Current power (W):", float(power_value / 10))
+
+        elif selection == 8:
+            switchMode = True
+            commands = devCommands.commandPlugSwitch(switchMode)
+            result = openapi.post(
+                f"/v1.0/iot-03/devices/{PLUG_DEVICE_ID}/commands", commands
+            )
+            print(commands)
+            commands = None  # Dont continue executing
+
+        elif selection == 9:
+            switchMode = False
+            commands = devCommands.commandPlugSwitch(switchMode)
+            result = openapi.post(
+                f"/v1.0/iot-03/devices/{PLUG_DEVICE_ID}/commands", commands
+            )
+            print(commands)
+            commands = None  # Dont continue executing
 
         else:
             print("Invalid command. Try again.\n")

@@ -24,6 +24,11 @@ def commandChoice(lightStat):
         return None
 
 
+# plug on/off
+def commandPlugSwitch(switchMode):
+    return {"commands": [{"code": "switch_1", "value": switchMode}]}
+
+
 def commandStatus(result):
     switch_led_value = None
     work_mode_value = None
@@ -56,6 +61,37 @@ def commandStatus(result):
     if work_mode_value == "white":
         print("Bright Value:", bright_value)
         print("Temp Value:", temp_value)
+
+
+def commandStatusPlug(result):
+    switch_plug_value = None
+    power_value = None
+    current_value = None
+    voltage_value = None
+    for item in result["result"]:
+        if item["code"] == "switch_1":
+            switch_plug_value = item["value"]
+            print("Switch Plug:", switch_plug_value)
+            continue
+        if item["code"] == "cur_power":
+            power_value = item["value"]
+            print("Current power (W):", float(power_value / 10))
+            continue
+        if item["code"] == "cur_current":
+            current_value = item["value"]
+            print("Current current (mA):", current_value)
+            continue
+        if item["code"] == "cur_voltage":
+            voltage_value = item["value"]
+            print("Current voltage (V):", float(voltage_value / 10))
+
+
+def commandStatusPlugPower(result):
+    power_value = None
+    for item in result["result"]:
+        if item["code"] == "cur_power":
+            power_value = item["value"]
+            return power_value
 
 
 def checkStatus():
