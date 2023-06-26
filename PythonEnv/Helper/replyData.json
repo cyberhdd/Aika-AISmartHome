@@ -1,0 +1,70 @@
+{
+    "bedroom": {
+        "on": [
+            "Sure, I'll turn on the bedroom light.",
+            "The bedroom light is now on.",
+            "Consider it done. The bedroom light is on."
+        ],
+        "off": [
+            "Okay, I'll turn off the bedroom light.",
+            "The bedroom light has been turned off.",
+            "Consider it done. The bedroom light is off."
+        ],
+        "status": [
+            "The bedroom light is currently [status].",
+            "The bedroom light is [status] at the moment.",
+            "Currently, the bedroom light is [status]."
+        ]
+    },
+    "bathroom": {
+        "on": [
+            "Sure, I'll turn on the bathroom light.",
+            "The bathroom light is now on.",
+            "Consider it done. The bathroom light is on."
+        ],
+        "off": [
+            "Okay, I'll turn off the bathroom light.",
+            "The bathroom light has been turned off.",
+            "Consider it done. The bathroom light is off."
+        ],
+        "status": [
+            "The bathroom light is currently [status].",
+            "The bathroom light is [status] at the moment.",
+            "Currently, the bathroom light is [status]."
+        ]
+    },
+    "both": {
+        "on": [
+            "Sure, I'll turn on both lights.",
+            "Both lights are now on.",
+            "Consider it done. The lights are on."
+        ],
+        "off": [
+            "Okay, I'll turn off both lights.",
+            "Both lights have been turned off.",
+            "Consider it done. The lights are off."
+        ],
+        "status": [
+            "Both lights are currently [status].",
+            "The lights are [status] at the moment.",
+            "Currently, the lights are [status]."
+        ]
+    },
+    "plug": {
+        "on": [
+            "Sure, I'll turn on the plug.",
+            "The plug is now on.",
+            "Consider it done. The plug is on."
+        ],
+        "off": [
+            "Okay, I'll turn off the plug.",
+            "The plug has been turned off.",
+            "Consider it done. The plug is off."
+        ],
+        "status": [
+            "The plug is currently [status].",
+            "The plug is [status] at the moment.",
+            "Currently, the plug is [status]."
+        ]
+    }
+}
