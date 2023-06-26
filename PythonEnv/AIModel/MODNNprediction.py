@@ -94,7 +94,7 @@ while True:
     print("Action: ", action_label)
 
     # Check if one of the probabilities are higher than 0.8
-    if intent_probabilities[0].max() > 0.8 or action_probabilities[0].max() > 0.8:
+    if intent_probabilities[0].max() > 0.7 and action_probabilities[0].max() > 0.7:
         # Perform action when both probabilities are higher than 0.8
         print("Your probabilities are high enough")
         print(f"Your {intent_labels} probability is at {intent_probabilities[0].max()}")
@@ -102,15 +102,138 @@ while True:
 
         if intent_labels == "bedroom" and action_labels == "on":
             reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
             if reply_data:
                 print("Reply:", reply_data)
             else:
                 print("No reply available for the given intent and action")
+        elif intent_labels == "bedroom" and action_labels == "off":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "bedroom" and action_labels == "status":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "bathroom" and action_labels == "on":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "bathroom" and action_labels == "off":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "bathroom" and action_labels == "status":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "plug" and action_labels == "on":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "plug" and action_labels == "off":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "plug" and action_labels == "status":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "plug" and action_labels == "power":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "both" and action_labels == "on":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "both" and action_labels == "off":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "both" and action_labels == "status":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "both" and action_labels == "brightness":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "both" and action_labels == "color":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "light" and action_labels == "on":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "light" and action_labels == "off":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+        elif intent_labels == "light" and action_labels == "status":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            # for error handling
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
+
     else:
         # Perform another action
-        print("Your probabilities are too low")
+        reply_data = replyHelper.get_reply("error", "repeat")
+        print("Reply:", reply_data)
+        """ print("Your probabilities are too low")
         print(f"Your {intent_labels} probability is at {intent_probabilities[0][0]}")
-        print(f"Your {action_labels} probability is at {action_probabilities[0][0]}")
+        print(f"Your {action_labels} probability is at {action_probabilities[0][0]}") """
 
     """ print("Intent Probabilities: ", intent_probabilities)
     print("Action Probabilities: ", action_probabilities) """
