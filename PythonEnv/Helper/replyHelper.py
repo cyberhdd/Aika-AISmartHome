@@ -8,8 +8,6 @@ with open("PythonEnv/Helper/replyData.json", "r") as f:
 
 def get_reply(intent_label, action_label):
     # print(replies_data)
-    print(replies_data.keys())
-    print(replies_data["bedroom"].keys())
     if intent_label in replies_data and action_label in replies_data[intent_label]:
         seq = replies_data[intent_label][action_label]
         if seq:

@@ -8,21 +8,18 @@ from tensorflow.keras.preprocessing.text import tokenizer_from_json
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import json
 import joblib
-import random
 
-# from ..Helper import replyHelper
-
+# code used to import replyHelper
+# from Helper import replyHelper #can be used if helper file under
 # .. to go up one file level
 # to import helper (required if file in different folders on the same level)
 import sys
 import os
 
-# import helper
 # Append Helper directory path to system path
 helper_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Helper"))
 sys.path.append(helper_path)
-
-# Import the reply_handler module
+# Import the module
 import replyHelper
 
 
@@ -90,27 +87,30 @@ while True:
         np.argmax(action_probabilities, axis=1)
     )
 
-    print("Intent: ", intent_labels)
-    print("Action: ", action_labels)
+    # the predicted labels
+    intent_label = intent_labels[0]
+    action_label = action_labels[0]
+    print("Intent: ", intent_label)
+    print("Action: ", action_label)
 
-    if intent_labels == "bedroom" and action_labels == "on":
-        reply_data = replyHelper.get_reply(intent_labels[0], action_labels[0])
-        if reply_data:
-            print("Reply:", reply_data)
-        else:
-            print("No reply available for the given intent and action")
-
-    """ # Check if probabilities are higher than 0.8
-    if intent_probabilities[0][0] > 0.8 and action_probabilities[0][0] > 0.8:
+    # Check if one of the probabilities are higher than 0.8
+    if intent_probabilities[0].max() > 0.8 or action_probabilities[0].max() > 0.8:
         # Perform action when both probabilities are higher than 0.8
         print("Your probabilities are high enough")
-        print(f"Your {intent_labels} probability is at {intent_probabilities[0][0]}")
-        print(f"Your {action_labels} probability is at {action_probabilities[0][0]}")
+        print(f"Your {intent_labels} probability is at {intent_probabilities[0].max()}")
+        print(f"Your {action_labels} probability is at {action_probabilities[0].max()}")
+
+        if intent_labels == "bedroom" and action_labels == "on":
+            reply_data = replyHelper.get_reply(intent_label, action_label)
+            if reply_data:
+                print("Reply:", reply_data)
+            else:
+                print("No reply available for the given intent and action")
     else:
         # Perform another action
         print("Your probabilities are too low")
         print(f"Your {intent_labels} probability is at {intent_probabilities[0][0]}")
-        print(f"Your {action_labels} probability is at {action_probabilities[0][0]}") """
+        print(f"Your {action_labels} probability is at {action_probabilities[0][0]}")
 
     """ print("Intent Probabilities: ", intent_probabilities)
     print("Action Probabilities: ", action_probabilities) """
