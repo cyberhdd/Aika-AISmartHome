@@ -154,7 +154,7 @@ model.fit(
         padded_test_queries,
         {"intent_output": onehot_test_intents, "action_output": onehot_test_actions},
     ),
-    epochs=10,
+    epochs=30,
 )
 
 # Save model

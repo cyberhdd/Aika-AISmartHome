@@ -111,18 +111,18 @@
             "Apologies, I'm not sure what you meant. Try again?",
             "Can you please rephrase or repeat?",
             "I didn't quite catch that. Please try again."
+        ],
+        "teach": [
+            "Sorry, I'm not sure what you meant. What should I do?",
+            "I'm sorry, I don't understand. What did you intend?",
+            "Apologies, I didn't get that. Can you clarify what I should do?",
+            "I'm not sure what you meant. Could you please explain?",
+            "Sorry, I'm confused. What action should I take?",
+            "I'm not familiar with that. Can you tell me what I should do?",
+            "Sorry, I don't know that. Can you provide more information?",
+            "I'm unsure about your request. Can you explain what you had in mind?",
+            "Apologies, I'm not following. What should I do?",
+            "Sorry, I didn't understand. Can you tell me what action to perform?"
         ]
-    },
-    "teach": [
-        "Sorry, I'm not sure what you meant. What should I do?",
-        "I'm sorry, I don't understand. What did you intend?",
-        "Apologies, I didn't get that. Can you clarify what I should do?",
-        "I'm not sure what you meant. Could you please explain?",
-        "Sorry, I'm confused. What action should I take?",
-        "I'm not familiar with that. Can you tell me what I should do?",
-        "Sorry, I don't know that. Can you provide more information?",
-        "I'm unsure about your request. Can you explain what you had in mind?",
-        "Apologies, I'm not following. What should I do?",
-        "Sorry, I didn't understand. Can you tell me what action to perform?"
-    ]
+    }
 }
