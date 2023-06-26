@@ -22,6 +22,7 @@ import joblib
 # Device imports
 from Helper import tuyaCommandHelper
 from Helper import sofCommandHelper
+from Helper import extractSlotsHelper
 
 #########################################################################
 ########################### Credential Section #########################
@@ -75,6 +76,8 @@ channel_list = [
 
 # bool to activate teaching and not respond to messages
 # Teach = False
+# book for wait mode - waiting for responses
+WaitMode = False
 
 client = commands.Bot(command_prefix="", intents=intents)
 # list of bot status
@@ -102,13 +105,21 @@ async def change_status():  # loop change status
     await client.change_presence(activity=discord.Game(next(status)))
 
 
+# method to check for the user inputting data
+def check_user_input(msg, message):
+    return msg.author == message.author and msg.channel == message.channel
+
+
 @client.event
 async def on_message(message):
-    global Teach  # accessing a global variable defined beforehand
+    # global Teach  # accessing a global variable defined beforehand
+    global WaitMode
     if message.author.bot:  # if bot sender, stop
         return
     # elif Teach == True:  # ensure new message is not for teaching
     # return
+    elif WaitMode == True:  # if bot on wait mode
+        return
     elif message.channel.id not in channel_list:  # if not in correct channel
         return
     else:
@@ -300,7 +311,37 @@ async def on_message(message):
                 # for error handling
                 if reply_data:
                     print("Reply:", reply_data)
-
+                    room = extractSlotsHelper.extract_slots(input_query)
+                    print("Extraction: ", room)
+                    if room == "bedroom":
+                        print(room)
+                    elif room == "bathroom":
+                        print(room)
+                    elif room is None:
+                        await message.channel.send(
+                            "Where do you want change the brightness? (bedroom/bathroom)"
+                        )
+                        try:
+                            WaitMode = True
+                            await message.channel.send("Wait Mode: On (10s)")
+                            location_message = await client.wait_for(
+                                "message",
+                                check=lambda msg: check_user_input(msg, message),
+                                timeout=10,
+                            )
+                            location = location_message.content
+                            room = extractSlotsHelper.get_slots(location)
+                            if room is None:
+                                reply_data = "No such location, please try again"  # change the reply data to an error
+                            WaitMode = False  # Teach mode off
+                            await message.channel.send("Wait Mode: Off")
+                        except asyncio.TimeoutError:
+                            print("No location received within the timeout")
+                            WaitMode = False  # Teach mode off
+                            await message.channel.send("Wait Mode: Off")
+                            return
+                    else:
+                        print(room, " error")
                 else:
                     print("No reply available for the given intent and action")
 
