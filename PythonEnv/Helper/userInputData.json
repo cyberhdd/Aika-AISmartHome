@@ -11,5 +11,9 @@
     "Hello": "To say hi",
     "teach me": "turn on the lights",
     "Turn off the light both both": "turn off the lights",
-    "What else can you do": "What can you do aside from these"
+    "What else can you do": "What can you do aside from these",
+    "up my light": "turn on",
+    "change the bathroom brightness to 50": "change the brightness to 50",
+    "alright, Im done bathing": "turn off the bathroom light",
+    "brightness down both": "turn down the brightness for all rooms"
 }

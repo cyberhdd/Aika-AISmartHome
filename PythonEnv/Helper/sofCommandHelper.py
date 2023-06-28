@@ -2,7 +2,7 @@ import requests
 import json
 
 # self command case
-import devCommands
+from Helper import devCommands
 
 credentials = json.load(open("config/credentials.json"))
 devices = json.load(open("config/devices.json"))
@@ -16,11 +16,70 @@ commandMode = None
 
 
 def postRequest(payload, commandMode):
-    url = f"http://{SONOFF_IP_ADDRESS}:{SONOFF_PORT}/zeroconf/{commandMode}"
-    headers = {"Content-Type": "application/json"}
-    response = requests.post(url, headers=headers, data=json.dumps(payload))
-    print(response)
-    return response
+    try:
+        url = f"http://{SONOFF_IP_ADDRESS}:{SONOFF_PORT}/zeroconf/{commandMode}"
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        print(response)
+        return response
+    except Exception:
+        print("An error occurred. Please try again.\n")
+        return None
+
+
+def sofBrightnessSet(bright_var):
+    try:
+        payload, commandMode = devCommands.commandSOFStatus()
+        response = postRequest(payload, commandMode)
+        if response.status_code == 200:
+            payload, commandMode = devCommands.commandSOFBrightnessSet(
+                response, bright_var
+            )
+        else:
+            print("Request failed with status code: ", response.status_code)
+
+        if payload is not None:
+            response = postRequest(payload, commandMode)
+            if response.status_code == 200:
+                response_data = response.json()
+                print("Response data:", response_data)
+            else:
+                print("Request failed with status code: ", response.status_code)
+    except Exception:
+        print("An error occurred. Please try again.\n")
+        return None
+
+
+def sofColorSet(color):
+    try:
+        payload, commandMode = devCommands.commandSOFColor(color)
+        if payload is not None:
+            response = postRequest(payload, commandMode)
+            if response.status_code == 200:
+                response_data = response.json()
+                print("Response data:", response_data)
+            else:
+                print("Request failed with status code: ", response.status_code)
+    except Exception:
+        print("An error occurred. Please try again.\n")
+        return None
+
+
+def sofBrightnessIncrease(bright_var):
+    payload, commandMode = devCommands.commandSOFStatus()
+    response = postRequest(payload, commandMode)
+    if response.status_code == 200:
+        payload, commandMode = devCommands.commandSOFBrightnessSet(response, bright_var)
+    else:
+        print("Request failed with status code: ", response.status_code)
+
+    if payload is not None:
+        response = postRequest(payload, commandMode)
+        if response.status_code == 200:
+            response_data = response.json()
+            print("Response data:", response_data)
+        else:
+            print("Request failed with status code: ", response.status_code)
 
 
 def sofCommands(selection):
@@ -49,9 +108,18 @@ def sofCommands(selection):
                 elif ltype == "white":
                     print("Bright Value:", brightness)
                     print("Temp Value:", temperature)
+
+                return (
+                    switch,
+                    ltype,
+                    color,
+                    brightness,
+                    temperature,
+                )
             else:
                 print("Request failed with status code: ", response.status_code)
-            return
+
+            return None
 
         elif selection == "bathroom light on" or selection == "bathroom light off":
             if selection == "bathroom light on":
@@ -69,10 +137,9 @@ def sofCommands(selection):
             )
             # type out the color name
             selection = input("Color choice: ").lower()
-
             payload, commandMode = devCommands.commandSOFColor(selection)
 
-        elif selection == 4:
+        elif selection == "bathroom light brightness":
             payload, commandMode = devCommands.commandSOFStatus()
             response = postRequest(payload, commandMode)
             if response.status_code == 200:
@@ -88,7 +155,7 @@ def sofCommands(selection):
             else:
                 print("Request failed with status code: ", response.status_code)
 
-        elif selection == "bathroom light brightness":
+        elif selection == "bathroom light temp":
             payload, commandMode = devCommands.commandSOFStatus()
             response = postRequest(payload, commandMode)
             if response.status_code == 200:
@@ -123,5 +190,6 @@ def sofCommands(selection):
 
     except Exception:
         print("An error occurred. Please try again.\n")
+        return None
 
     return

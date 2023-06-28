@@ -11,9 +11,9 @@
             "Consider it done. The bedroom light is off."
         ],
         "status": [
-            "The bedroom light is currently [status].",
-            "The bedroom light is [status] at the moment.",
-            "Currently, the bedroom light is [status]."
+            "The bedroom light is currently as such.",
+            "The bedroom light is as such at the moment.",
+            "Currently, the bedroom light is as such."
         ]
     },
     "bathroom": {
@@ -28,9 +28,9 @@
             "Consider it done. The bathroom light is off."
         ],
         "status": [
-            "The bathroom light is currently [status].",
-            "The bathroom light is [status] at the moment.",
-            "Currently, the bathroom light is [status]."
+            "The bathroom light is currently as such.",
+            "The bathroom light is as such at the moment.",
+            "Currently, the bathroom light is as such."
         ]
     },
     "both": {
@@ -45,9 +45,9 @@
             "Consider it done. The lights are off."
         ],
         "status": [
-            "Both lights are currently [status].",
-            "The lights are [status] at the moment.",
-            "Currently, the lights are [status]."
+            "Both lights are currently as such.",
+            "The lights are as such at the moment.",
+            "Currently, the lights are as such."
         ],
         "brightness": [
             "Changing the brightness.",
@@ -89,14 +89,14 @@
             "Consider it done. The plug is off."
         ],
         "status": [
-            "The plug is currently [status].",
-            "The plug is [status] at the moment.",
-            "Currently, the plug is [status]."
+            "The plug is currently as such.",
+            "The plug is as such at the moment.",
+            "Currently, the plug is as such."
         ],
         "power": [
-            "The power used is currently [status].",
-            "The power consumed is [status] at the moment.",
-            "Currently, the power being used is [status]."
+            "The power used is currently as such.",
+            "The power consumed is as such at the moment.",
+            "Currently, the power being used is as such."
         ]
     },
     "error": {

@@ -145,7 +145,7 @@ def colorChoice():
 
 def commandColorChoice(selection):
     if selection in colourHelper.colours:
-        print(colourHelper.colours)
+        # print(colourHelper.colours)
         command = colourHelper.get_colour_command(selection)
     else:
         command = colourHelper.get_colour_command("white")
@@ -364,6 +364,18 @@ def commandSOFBrightness(result, selection):
     else:
         return None
 
+    payload = {
+        "deviceid": LIGHT_SONOFF_DEVICE_ID,
+        "data": {"ltype": "white", "white": {"br": brightness, "ct": white["ct"]}},
+    }
+    return payload, commandMode
+
+
+def commandSOFBrightnessSet(result, brightness):
+    commandMode = "dimmable"
+    response_data = result.json()
+    white = response_data["data"]["white"]
+    bright_value = white["br"]
     payload = {
         "deviceid": LIGHT_SONOFF_DEVICE_ID,
         "data": {"ltype": "white", "white": {"br": brightness, "ct": white["ct"]}},

@@ -23,6 +23,8 @@ import joblib
 from Helper import tuyaCommandHelper
 from Helper import sofCommandHelper
 from Helper import extractSlotsHelper
+from Helper import nerHelper
+from Helper import discordUserInputHelper
 
 #########################################################################
 ########################### Credential Section #########################
@@ -105,7 +107,7 @@ async def change_status():  # loop change status
     await client.change_presence(activity=discord.Game(next(status)))
 
 
-# method to check for the user inputting data
+# method to check for used sending message is the original sender being waited for
 def check_user_input(msg, message):
     return msg.author == message.author and msg.channel == message.channel
 
@@ -114,7 +116,7 @@ def check_user_input(msg, message):
 async def on_message(message):
     # global Teach  # accessing a global variable defined beforehand
     global WaitMode
-    if message.author.bot:  # if bot sender, stop
+    if message.author.bot or message.author == client.user:  # if bot sender, stop
         return
     # elif Teach == True:  # ensure new message is not for teaching
     # return
@@ -305,24 +307,25 @@ async def on_message(message):
                 else:
                     print("No reply available for the given intent and action")
 
-            # both brightness
-            elif intent_labels == "both" and action_labels == "brightness":
+            # brightness control, handles for all brightness
+            elif action_labels == "brightness":
                 reply_data = replyHelper.get_reply(intent_label, action_label)
+
                 # for error handling
                 if reply_data:
                     print("Reply:", reply_data)
                     room = extractSlotsHelper.extract_slots(input_query)
-                    print("Extraction: ", room)
-                    if room == "bedroom":
-                        print(room)
-                    elif room == "bathroom":
-                        print(room)
-                    elif room is None:
+                    print("Extraction room: ", room)
+                    bright_var = nerHelper.extract_number(input_query)
+                    print("Extraction brightness: ", bright_var)
+
+                    # if room not specified, request user input
+                    if room is None:
                         await message.channel.send(
                             "Where do you want change the brightness? (bedroom/bathroom)"
                         )
                         try:
-                            WaitMode = True
+                            WaitMode = True  # Wait mode
                             await message.channel.send("Wait Mode: On (10s)")
                             location_message = await client.wait_for(
                                 "message",
@@ -331,15 +334,85 @@ async def on_message(message):
                             )
                             location = location_message.content
                             room = extractSlotsHelper.get_slots(location)
+
                             if room is None:
                                 reply_data = "No such location, please try again"  # change the reply data to an error
-                            WaitMode = False  # Teach mode off
-                            await message.channel.send("Wait Mode: Off")
+                                await message.channel.send("Wait Mode: Off")
+                                WaitMode = False
+                                return
                         except asyncio.TimeoutError:
                             print("No location received within the timeout")
-                            WaitMode = False  # Teach mode off
+                            WaitMode = False  # Wait mode off
                             await message.channel.send("Wait Mode: Off")
                             return
+
+                    # if brightness not specified
+                    if bright_var is None:
+                        # input brightness value
+                        await message.channel.send(
+                            "Set a value from 1 to 100 for the brightness (10s)"
+                        )
+                        try:
+                            WaitMode = (
+                                True  # set wait mode to true for brightness input
+                            )
+                            brightness = await client.wait_for(
+                                "message",
+                                check=lambda msg: check_user_input(msg, message),
+                                timeout=10,
+                            )
+                            WaitMode = False
+                            # check the brightness value input
+                            # check if any number input
+                            bright_var = nerHelper.extract_number(brightness.content)
+                            # bright_var = int(brightness.content)
+                            print(bright_var, type(bright_var))
+                            # no number
+                            if bright_var is None:
+                                reply_data = "Sorry, only digits. Please try again"  # change the reply data to an error
+                                return
+                        except ValueError:
+                            WaitMode = False
+                            return None
+
+                    # adjust the brightness value input
+                    # maximum and minimum brightness
+                    if bright_var < 1:
+                        bright_var = 1
+                        await message.channel.send(
+                            "Brightness value set to minimum (1)"
+                        )
+                    elif bright_var > 100:
+                        bright_var = 100
+                        await message.channel.send(
+                            "Brightness value set to maximum (100)"
+                        )
+                    print(bright_var)
+
+                    # brightness for bedroom
+                    if room == "bedroom":
+                        if bright_var is not None:
+                            # tuya devices range from 10 to 1000, * 10
+                            setBrightness = tuyaCommandHelper.tuyaBrightnessSet(
+                                bright_var * 10
+                            )
+                        if setBrightness is not None:
+                            reply_data = (
+                                "Bedroom brightness has been changed to "
+                                + str(bright_var)
+                            )
+
+                    # brightness for bathroom
+                    elif room == "bathroom":
+                        if bright_var is not None:
+                            setBrightness = sofCommandHelper.sofBrightnessSet(
+                                bright_var
+                            )
+                        if setBrightness is not None:
+                            reply_data = (
+                                "Bathroom brightness has been changed to "
+                                + str(bright_var)
+                            )
                     else:
                         print(room, " error")
                 else:
@@ -381,6 +454,10 @@ async def on_message(message):
                 else:
                     print("No reply available for the given intent and action")
 
+            # others with labels above threshold but not defined above
+            else:
+                reply_data = replyHelper.get_reply("error", "repeat")
+
         else:
             # Perform no intent action
             reply_data = replyHelper.get_reply("error", "repeat")
@@ -395,16 +472,18 @@ async def on_message(message):
 
             """ # save user query and intended action if low probability
             # Wait for the next user input
-            def check_user_input(msg):
-                return msg.author == message.author and msg.channel == message.channel
-
             # await message.channel.send(reply_data + "\nIntended action:")
             await message.channel.send(reply_data)
             try:
                 Teach = True  # Teach mode
-                await message.channel.send("Teach Mode: On (20s)")
+                #await message.channel.send("Teach Mode: On (20s)")
+                #action_message = await client.wait_for(
+                #    "message", check=check_user_input, timeout=20
+                #)
                 action_message = await client.wait_for(
-                    "message", check=check_user_input, timeout=20
+                    "message",
+                    check=lambda msg: check_user_input(msg, message),
+                    timeout=20,
                 )
                 action_input = action_message.content
                 userInputHelper.append_data(input_query, action_input)
@@ -421,6 +500,10 @@ async def on_message(message):
                 await message.channel.send("Teach Mode: Off")
                 return """
 
+        WaitMode = False  # Wait mode off
+        # print if no reply data from any intent and is None
+        if reply_data is None:
+            reply_data = "Sorry, I didnt get that"
         send_message = reply_data
         # print(send_message)
         await message.channel.send(send_message)  # print in discord from bot
