@@ -42,11 +42,13 @@ async def handle_bedroom_status(reply_data, message):
             colour_led_value,
         ) = tuyaCommandHelper.tuyaCommands("bedroom light status")
         reply = "Check the connection"
-        status = "on" if work_mode_value == True else "off"
+        status = "off"
+        if switch_led_value == True:
+            status = "on"
         if work_mode_value == "colour":
             reply = (
                 "Bedroom Light: "
-                + str(switch_led_value)
+                + status
                 + "\nMode: "
                 + str(work_mode_value)
                 + "\nColor: "
@@ -147,10 +149,14 @@ async def handle_plug_status(reply_data, message):
             current_value,
             voltage_value,
         ) = tuyaCommandHelper.tuyaCommands("plug status")
+        status = "off"
+        if switch_plug_value == True:
+            status = "on"
+            print(switch_plug_value, "is on")
         reply = (
             "Plug: "
-            + str(switch_plug_value)
-            + "\Power (W): "
+            + status
+            + "\nPower (W): "
             + str(power_value)
             + "\nCurrent (mA): "
             + str(current_value)
