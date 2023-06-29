@@ -355,28 +355,33 @@ async def handle_color_control(reply_data, message, input_query, client):
 
 
 # Function for handling "light on"
-async def handle_light_on(reply_data, message, client):
+async def handle_light_on(reply_data, message, client, input_query):
     if reply_data:
-        await message.channel.send(reply_data)
-        try:
-            await message.channel.send("Wait Mode: On (10s)")
-            location_message = await client.wait_for(
-                "message",
-                check=lambda msg: check_user_input(msg, message),
-                timeout=10,
-            )
-            location = location_message.content
-            room = extractSlotsHelper.get_all_location_slots(location)
+        print("Reply:", reply_data)
+        room = extractSlotsHelper.get_all_location_slots(input_query)
+        print("Extraction room: ", room)
 
-            if room is None:
-                reply_data = "No such location, please try again"  # change the reply data to an error
+        # if room not specified, request user input
+        if room is None:
+            await message.channel.send(reply_data)
+            try:
+                await message.channel.send("Wait Mode: On (10s)")
+                location_message = await client.wait_for(
+                    "message",
+                    check=lambda msg: check_user_input(msg, message),
+                    timeout=10,
+                )
+                location = location_message.content
+                room = extractSlotsHelper.get_all_location_slots(location)
+
+                if room is None:
+                    reply_data = "No such location, please try again"  # change the reply data to an error
+                    await message.channel.send("Wait Mode: Off")
+                    return reply_data
+            except asyncio.TimeoutError:
+                reply_data = "No location received within the timeout"
                 await message.channel.send("Wait Mode: Off")
                 return reply_data
-        except asyncio.TimeoutError:
-            print("No location received within the timeout")
-            reply_data = "No such location, please try again"
-            await message.channel.send("Wait Mode: Off")
-            return reply_data
 
         # room for bedroom
         if room == "bedroom":
@@ -404,28 +409,33 @@ async def handle_light_on(reply_data, message, client):
 
 
 # Function for handling "light off"
-async def handle_light_off(reply_data, message, client):
+async def handle_light_off(reply_data, message, client, input_query):
     if reply_data:
-        await message.channel.send(reply_data)
-        try:
-            await message.channel.send("Wait Mode: On (10s)")
-            location_message = await client.wait_for(
-                "message",
-                check=lambda msg: check_user_input(msg, message),
-                timeout=10,
-            )
-            location = location_message.content
-            room = extractSlotsHelper.get_all_location_slots(location)
+        print("Reply:", reply_data)
+        room = extractSlotsHelper.get_all_location_slots(input_query)
+        print("Extraction room: ", room)
 
-            if room is None:
-                reply_data = "No such location, please try again"  # change the reply data to an error
+        # if room not specified, request user input
+        if room is None:
+            await message.channel.send(reply_data)
+            try:
+                await message.channel.send("Wait Mode: On (10s)")
+                location_message = await client.wait_for(
+                    "message",
+                    check=lambda msg: check_user_input(msg, message),
+                    timeout=10,
+                )
+                location = location_message.content
+                room = extractSlotsHelper.get_all_location_slots(location)
+
+                if room is None:
+                    reply_data = "No such location, please try again"  # change the reply data to an error
+                    await message.channel.send("Wait Mode: Off")
+                    return reply_data
+            except asyncio.TimeoutError:
+                reply_data = "No location received within the timeout"
                 await message.channel.send("Wait Mode: Off")
                 return reply_data
-        except asyncio.TimeoutError:
-            print("No location received within the timeout")
-            reply_data = "No such location, please try again"
-            await message.channel.send("Wait Mode: Off")
-            return reply_data
 
         # room for bedroom
         if room == "bedroom":
@@ -453,29 +463,33 @@ async def handle_light_off(reply_data, message, client):
 
 
 # Function for handling "light status"
-async def handle_light_status(reply_data, message, client):
+async def handle_light_status(reply_data, message, client, input_query):
     if reply_data:
-        await message.channel.send(reply_data)
-        try:
-            await message.channel.send("Wait Mode: On (10s)")
-            location_message = await client.wait_for(
-                "message",
-                check=lambda msg: check_user_input(msg, message),
-                timeout=10,
-            )
-            location = location_message.content
-            room = extractSlotsHelper.get_all_location_slots(location)
+        print("Reply:", reply_data)
+        room = extractSlotsHelper.get_all_location_slots(input_query)
+        print("Extraction room: ", room)
 
-            if room is None:
-                reply_data = "No such location, please try again"  # change the reply data to an error
+        # if room not specified, request user input
+        if room is None:
+            await message.channel.send(reply_data)
+            try:
+                await message.channel.send("Wait Mode: On (10s)")
+                location_message = await client.wait_for(
+                    "message",
+                    check=lambda msg: check_user_input(msg, message),
+                    timeout=10,
+                )
+                location = location_message.content
+                room = extractSlotsHelper.get_all_location_slots(location)
+
+                if room is None:
+                    reply_data = "No such location, please try again"  # change the reply data to an error
+                    await message.channel.send("Wait Mode: Off")
+                    return reply_data
+            except asyncio.TimeoutError:
+                reply_data = "No location received within the timeout"
                 await message.channel.send("Wait Mode: Off")
                 return reply_data
-        except asyncio.TimeoutError:
-            print("No location received within the timeout")
-            reply_data = "No such location, please try again"
-            await message.channel.send("Wait Mode: Off")
-            return reply_data
-
         # room for bedroom
         if room == "bedroom":
             await handle_bedroom_status(reply_data, message)
