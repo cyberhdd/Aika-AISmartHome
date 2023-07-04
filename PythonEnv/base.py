@@ -161,13 +161,13 @@ async def on_message(message):
         print("Intent: ", intent_label)
         print("Action: ", action_label)
 
-        # Check if one of the probabilities are higher than 0.8
+        # Check if one of the probabilities are higher than 0.7
         if intent_probabilities[0].max() > 0.7 and action_probabilities[0].max() > 0.7:
             # print labels for testing
             labels = "Intent: " + str(intent_label) + "\nAction: " + str(action_label)
             await message.channel.send(labels)  # print in discord from bot
 
-            # Perform action when both probabilities are higher than 0.8
+            # Perform action when both probabilities are higher than 0.7
             print("Your probabilities are high enough")
             print(
                 f"Your {intent_labels} probability is at {intent_probabilities[0].max()}"

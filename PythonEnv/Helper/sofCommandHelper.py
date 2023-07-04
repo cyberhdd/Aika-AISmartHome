@@ -58,8 +58,10 @@ def sofColorSet(color):
             if response.status_code == 200:
                 response_data = response.json()
                 print("Response data:", response_data)
+                return response_data
             else:
                 print("Request failed with status code: ", response.status_code)
+                return None
     except Exception:
         print("An error occurred. Please try again.\n")
         return None

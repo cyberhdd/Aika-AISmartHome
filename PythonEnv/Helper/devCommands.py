@@ -273,7 +273,7 @@ def commandTempSet(temperature):
 def commandSOFColor(selection):
     commandMode = "dimmable"
     if selection in colourHelper.colours:
-        print(colourHelper.colours)
+        # print(colourHelper.colours)
         color = colourHelper.get_colour_rgb(selection)
     else:
         color = colourHelper.get_colour_rgb("purple")

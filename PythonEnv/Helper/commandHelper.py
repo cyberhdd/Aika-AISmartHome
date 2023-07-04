@@ -282,6 +282,7 @@ async def handle_color_control(reply_data, message, input_query, client):
         print("Extraction room: ", room)
         color = extractSlotsHelper.extract_color_slots(input_query)
         print("Extraction color: ", color)
+        setColor = None
 
         # if room not specified, request user input
         if room is None:
@@ -337,7 +338,8 @@ async def handle_color_control(reply_data, message, input_query, client):
                 setColor = tuyaCommandHelper.tuyaColorSet(color)
             if setColor is not None:
                 reply_data = "Bedroom light color has been changed to " + str(color)
-            return reply_data
+                return reply_data
+            return None
 
         # color for bathroom
         elif room == "bathroom":
@@ -345,7 +347,8 @@ async def handle_color_control(reply_data, message, input_query, client):
                 setColor = sofCommandHelper.sofColorSet(color)
             if setColor is not None:
                 reply_data = "Bathroom light color has been changed to " + str(color)
-            return reply_data
+                return reply_data
+            return None
         else:
             print(room, " error")
             return None
