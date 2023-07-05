@@ -43,6 +43,7 @@ def sofBrightnessSet(bright_var):
             if response.status_code == 200:
                 response_data = response.json()
                 print("Response data:", response_data)
+                return response_data
             else:
                 print("Request failed with status code: ", response.status_code)
     except Exception:
